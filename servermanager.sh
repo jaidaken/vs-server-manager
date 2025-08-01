@@ -14,8 +14,10 @@ from typing import Optional, List, Dict, Any, Tuple
 from collections import deque
 import re
 
+
 class TerminalColors:
     """ANSI color codes for terminal output"""
+
     # Reset
     RESET = "\033[0m"
 
@@ -58,6 +60,7 @@ class TerminalColors:
     BG_BRIGHT_MAGENTA = "\033[105m"
     BG_BRIGHT_CYAN = "\033[106m"
     BG_BRIGHT_WHITE = "\033[107m"
+
 
 class TerminalControl:
     """Terminal control functions using ANSI escape codes"""
@@ -107,75 +110,78 @@ class TerminalControl:
         """Switch back to main screen"""
         return "\033[?1049l"
 
+
 class VintageStoryServerManager:
     def __init__(self):
         # Configuration constants
         self.CONFIG = {
-            'username': 'vintagestory',
-            'vs_path': '/home/vintagestory/server',
-            'data_path': '/var/vintagestory/data',
-            'screen_name': 'vintagestory_server',
-            'service': 'VintagestoryServer.dll',
-            'pid_file': '/tmp/vintagestory_server.pid',
-            'log_subdir': 'Logs',
-            'log_filename': 'server-main.log'
+            "username": "vintagestory",
+            "vs_path": "/home/vintagestory/server",
+            "data_path": "/var/vintagestory/data",
+            "screen_name": "vintagestory_server",
+            "service": "VintagestoryServer.dll",
+            "pid_file": "/tmp/vintagestory_server.pid",
+            "log_subdir": "Logs",
+            "log_filename": "server-main.log",
         }
 
         # Performance constants
         self.PERFORMANCE = {
-            'target_fps': 30,
-            'process_cache_interval': 0.5,
-            'pid_cache_interval': 0.5,
-            'cpu_update_interval': 1.0,
-            'memory_update_interval': 1.0,
-            'player_update_interval': 60.0,
-            'memory_cleanup_interval': 300.0,
-            'resource_check_interval': 60.0,
-            'max_background_tasks': 3,
-            'log_buffer_max_size': 10000,
-            'command_log_max_size': 50,
-            'memory_warning_threshold': 100,  # MB
-            'log_buffer_warning_threshold': 7000,
-            'command_log_warning_threshold': 35,
-            'input_timeout': 0.001,  # 1ms timeout for input operations
-            'input_timeout_fallback': 0.01  # 10ms fallback if needed
+            "target_fps": 30,
+            "process_cache_interval": 0.5,
+            "pid_cache_interval": 0.5,
+            "cpu_update_interval": 1.0,
+            "memory_update_interval": 1.0,
+            "player_update_interval": 60.0,
+            "memory_cleanup_interval": 300.0,
+            "resource_check_interval": 60.0,
+            "max_background_tasks": 3,
+            "log_buffer_max_size": 10000,
+            "command_log_max_size": 50,
+            "memory_warning_threshold": 100,  # MB
+            "log_buffer_warning_threshold": 7000,
+            "command_log_warning_threshold": 35,
+            "input_timeout": 0.001,  # 1ms timeout for input operations
+            "input_timeout_fallback": 0.01,  # 10ms fallback if needed
         }
 
         # Error messages
         self.MESSAGES = {
-            'server_started': 'Server started successfully!',
-            'server_start_failed': 'Failed to start server!',
-            'server_stopped': 'Server stopped successfully!',
-            'server_stop_failed': 'Failed to stop server!',
-            'server_restarted': 'Server restarted successfully!',
-            'server_restart_failed': 'Failed to restart server!',
-            'command_sent': 'Server command sent: /{}',
-            'command_failed': 'Failed to send server command!',
-            'unknown_command': 'Unknown command: {}',
-            'quitting': 'Quitting manager...',
-            'cleanup_completed': 'Manager cleanup completed',
-            'updating_players': 'Updating player count...',
-            'online_players': 'Online players: {}',
-            'no_players': 'No players currently online',
-            'player_count_update': 'Manual player count update: {} players',
-            'initial_player_check': 'Performing initial player count check...',
-            'no_initial_check': 'Server not running - no initial player check needed',
-            'high_memory_usage': 'High memory usage: {:.1f}MB',
-            'large_log_buffer': 'Large log buffer: {} lines',
-            'large_command_log': 'Large command log: {} entries'
+            "server_started": "Server started successfully!",
+            "server_start_failed": "Failed to start server!",
+            "server_stopped": "Server stopped successfully!",
+            "server_stop_failed": "Failed to stop server!",
+            "server_restarted": "Server restarted successfully!",
+            "server_restart_failed": "Failed to restart server!",
+            "command_sent": "Server command sent: /{}",
+            "command_failed": "Failed to send server command!",
+            "unknown_command": "Unknown command: {}",
+            "quitting": "Quitting manager...",
+            "cleanup_completed": "Manager cleanup completed",
+            "updating_players": "Updating player count...",
+            "online_players": "Online players: {}",
+            "no_players": "No players currently online",
+            "player_count_update": "Manual player count update: {} players",
+            "initial_player_check": "Performing initial player count check...",
+            "no_initial_check": "Server not running - no initial player check needed",
+            "high_memory_usage": "High memory usage: {:.1f}MB",
+            "large_log_buffer": "Large log buffer: {} lines",
+            "large_command_log": "Large command log: {} entries",
         }
 
         # Configuration
-        self.username = self.CONFIG['username']
-        self.vs_path = self.CONFIG['vs_path']
-        self.data_path = self.CONFIG['data_path']
-        self.screen_name = self.CONFIG['screen_name']
-        self.service = self.CONFIG['service']
-        self.pid_file = self.CONFIG['pid_file']
-        self.log_file = os.path.join(self.data_path, self.CONFIG['log_subdir'], self.CONFIG['log_filename'])
+        self.username = self.CONFIG["username"]
+        self.vs_path = self.CONFIG["vs_path"]
+        self.data_path = self.CONFIG["data_path"]
+        self.screen_name = self.CONFIG["screen_name"]
+        self.service = self.CONFIG["service"]
+        self.pid_file = self.CONFIG["pid_file"]
+        self.log_file = os.path.join(
+            self.data_path, self.CONFIG["log_subdir"], self.CONFIG["log_filename"]
+        )
 
         # Performance settings
-        self.target_fps = self.PERFORMANCE['target_fps']
+        self.target_fps = self.PERFORMANCE["target_fps"]
         self.frame_time = 1.0 / self.target_fps
         self.last_frame_time = 0
 
@@ -183,7 +189,7 @@ class VintageStoryServerManager:
         self.terminal_fd = sys.stdin.fileno()
         self.old_terminal_settings = None
         self.max_y, self.max_x = 0, 0
-        self.log_lines = deque(maxlen=self.PERFORMANCE['log_buffer_max_size'])
+        self.log_lines = deque(maxlen=self.PERFORMANCE["log_buffer_max_size"])
         self.command_buffer = ""
         self.command_buffer_max = 1024
         self.status = "OFF"
@@ -195,26 +201,26 @@ class VintageStoryServerManager:
         # Caching system for performance
         self._process_info_cache = None
         self._process_info_cache_time = 0
-        self._process_info_cache_interval = self.PERFORMANCE['process_cache_interval']
+        self._process_info_cache_interval = self.PERFORMANCE["process_cache_interval"]
 
         # CPU monitoring state with caching
         self.last_cpu_update = 0
         self.cached_cpu_percent = "N/A"
-        self.cpu_update_interval = self.PERFORMANCE['cpu_update_interval']
+        self.cpu_update_interval = self.PERFORMANCE["cpu_update_interval"]
 
         # Memory monitoring state with caching
         self.last_mem_update = 0
         self.cached_mem_percent = "N/A"
-        self.mem_update_interval = self.PERFORMANCE['memory_update_interval']
+        self.mem_update_interval = self.PERFORMANCE["memory_update_interval"]
 
         # PID monitoring state with caching
         self.cached_pid = None
         self.pid_update_needed = True
         self._pid_cache_time = 0
-        self._pid_cache_interval = self.PERFORMANCE['pid_cache_interval']
+        self._pid_cache_interval = self.PERFORMANCE["pid_cache_interval"]
 
         # Command log system
-        self.command_log = deque(maxlen=self.PERFORMANCE['command_log_max_size'])
+        self.command_log = deque(maxlen=self.PERFORMANCE["command_log_max_size"])
         self.command_log.append("Manager started - Ready for commands")
 
         # Security tracking
@@ -226,7 +232,7 @@ class VintageStoryServerManager:
         self.connected_players = set()
         self.player_count = 0
         self.last_player_update = 0
-        self.player_update_interval = self.PERFORMANCE['player_update_interval']
+        self.player_update_interval = self.PERFORMANCE["player_update_interval"]
         self.player_update_thread = None
         self.player_update_running = True
 
@@ -245,12 +251,12 @@ class VintageStoryServerManager:
 
         # Thread pool for background tasks
         self._background_tasks = []
-        self._max_background_tasks = self.PERFORMANCE['max_background_tasks']
+        self._max_background_tasks = self.PERFORMANCE["max_background_tasks"]
 
         # Input handling state - Simplified
         self.escape_buffer = ""
-        self.input_timeout = self.PERFORMANCE['input_timeout']
-        self.input_timeout_fallback = self.PERFORMANCE['input_timeout_fallback']
+        self.input_timeout = self.PERFORMANCE["input_timeout"]
+        self.input_timeout_fallback = self.PERFORMANCE["input_timeout_fallback"]
 
         # Mouse support detection
         self.mouse_supported = False
@@ -273,62 +279,70 @@ class VintageStoryServerManager:
         self._last_command_buffer = ""  # Initialize command buffer tracking
 
         # Mark all regions as dirty on startup for initial draw
-        self._dirty_regions = {'header', 'borders', 'log', 'players', 'feedback', 'help', 'input'}
+        self._dirty_regions = {
+            "header",
+            "borders",
+            "log",
+            "players",
+            "feedback",
+            "help",
+            "input",
+        }
 
         # Memory management
         self._last_memory_cleanup = 0
-        self._memory_cleanup_interval = self.PERFORMANCE['memory_cleanup_interval']
+        self._memory_cleanup_interval = self.PERFORMANCE["memory_cleanup_interval"]
 
         # Resource monitoring
         self._last_resource_check = 0
-        self._resource_check_interval = self.PERFORMANCE['resource_check_interval']
+        self._resource_check_interval = self.PERFORMANCE["resource_check_interval"]
         self._memory_usage_mb = 0
         self._log_lines_count = 0
 
         # Input handling - Simplified escape sequence mapping
         self.ESCAPE_SEQUENCES = {
             # Arrow keys
-            '\x1b[A': 'scroll_up',
-            '\x1b[B': 'scroll_down',
-            '\x1b[C': 'ignore',  # Right arrow
-            '\x1b[D': 'ignore',  # Left arrow
-
+            "\x1b[A": "scroll_up",
+            "\x1b[B": "scroll_down",
+            "\x1b[C": "ignore",  # Right arrow
+            "\x1b[D": "ignore",  # Left arrow
             # Page navigation
-            '\x1b[5~': 'page_up',
-            '\x1b[6~': 'page_down',
-
+            "\x1b[5~": "page_up",
+            "\x1b[6~": "page_down",
             # Home/End
-            '\x1b[H': 'home',
-            '\x1b[F': 'end',
-            '\x1bOH': 'home',  # Alternative Home
-            '\x1bOF': 'end',   # Alternative End
+            "\x1b[H": "home",
+            "\x1b[F": "end",
+            "\x1bOH": "home",  # Alternative Home
+            "\x1bOF": "end",  # Alternative End
         }
 
         # Security validation patterns
         self.SECURITY_PATTERNS = {
-            'screen_name': r'^[a-zA-Z0-9_-]+$',  # Alphanumeric, underscore, hyphen only
-            'command': r'^[a-zA-Z0-9\s\-_.,!?()[\]{}:;"\'\\/]+$',  # Safe command characters
-            'path': r'^[a-zA-Z0-9\-_./]+$'  # Safe path characters
+            "screen_name": r"^[a-zA-Z0-9_-]+$",  # Alphanumeric, underscore, hyphen only
+            "command": r'^[a-zA-Z0-9\s\-_.,!?()[\]{}:;"\'\\/]+$',  # Safe command characters
+            "path": r"^[a-zA-Z0-9\-_./]+$",  # Safe path characters
         }
 
         # Dangerous command patterns to block
         self.DANGEROUS_PATTERNS = [
-            r'sudo\s+',           # sudo commands
-            r'rm\s+-rf',          # recursive delete
-            r'dd\s+if=',          # disk operations
-            r'>\s*/dev/',         # device writes
-            r'chmod\s+777',       # dangerous permissions
-            r'wget\s+http',       # downloads
-            r'curl\s+http',       # downloads
-            r'nc\s+',             # netcat
-            r'telnet\s+',         # telnet
-            r'ssh\s+',            # ssh connections
+            r"sudo\s+",  # sudo commands
+            r"rm\s+-rf",  # recursive delete
+            r"dd\s+if=",  # disk operations
+            r">\s*/dev/",  # device writes
+            r"chmod\s+777",  # dangerous permissions
+            r"wget\s+http",  # downloads
+            r"curl\s+http",  # downloads
+            r"nc\s+",  # netcat
+            r"telnet\s+",  # telnet
+            r"ssh\s+",  # ssh connections
         ]
 
     def get_terminal_size(self) -> Tuple[int, int]:
         """Get terminal dimensions"""
         try:
-            hw = struct.unpack('hh', fcntl.ioctl(self.terminal_fd, termios.TIOCGWINSZ, '1234'))
+            hw = struct.unpack(
+                "hh", fcntl.ioctl(self.terminal_fd, termios.TIOCGWINSZ, "1234")
+            )
             return hw[0], hw[1]  # rows, cols
         except (OSError, IOError, struct.error):
             # Terminal size detection failed, use fallback
@@ -370,7 +384,9 @@ class VintageStoryServerManager:
     def restore_terminal(self):
         """Restore terminal to original state"""
         if self.old_terminal_settings:
-            termios.tcsetattr(self.terminal_fd, termios.TCSADRAIN, self.old_terminal_settings)
+            termios.tcsetattr(
+                self.terminal_fd, termios.TCSADRAIN, self.old_terminal_settings
+            )
 
         # Mouse tracking disabled for SSH stability
         pass
@@ -386,17 +402,17 @@ class VintageStoryServerManager:
 
         # Check system commands
         required_commands = {
-            'pgrep': 'procps',
-            'screen': 'screen',
-            'dotnet': '.NET Runtime',
-            'bash': 'bash',
-            'ps': 'procps'
+            "pgrep": "procps",
+            "screen": "screen",
+            "dotnet": ".NET Runtime",
+            "bash": "bash",
+            "ps": "procps",
         }
         missing_commands = []
 
         for cmd, package in required_commands.items():
             try:
-                result = subprocess.run(['which', cmd], capture_output=True)
+                result = subprocess.run(["which", cmd], capture_output=True)
                 if result.returncode != 0:
                     missing_commands.append((cmd, package))
             except subprocess.CalledProcessError:
@@ -405,9 +421,22 @@ class VintageStoryServerManager:
         # Check Python modules
         missing_builtin = []
         builtin_modules = [
-            'os', 'sys', 'time', 'signal', 'subprocess', 'threading',
-            'json', 'select', 'termios', 'tty', 'fcntl', 'struct',
-            'pathlib', 'typing', 'collections', 're'
+            "os",
+            "sys",
+            "time",
+            "signal",
+            "subprocess",
+            "threading",
+            "json",
+            "select",
+            "termios",
+            "tty",
+            "fcntl",
+            "struct",
+            "pathlib",
+            "typing",
+            "collections",
+            "re",
         ]
 
         for module in builtin_modules:
@@ -425,9 +454,11 @@ class VintageStoryServerManager:
         if not sys.stdout.isatty():
             terminal_issues.append("Not running in a terminal")
 
-        term = os.environ.get('TERM', '')
-        if not term or term == 'dumb':
-            terminal_issues.append("Unsupported terminal type (set TERM=xterm-256color)")
+        term = os.environ.get("TERM", "")
+        if not term or term == "dumb":
+            terminal_issues.append(
+                "Unsupported terminal type (set TERM=xterm-256color)"
+            )
 
         # Display results
         if missing_commands or missing_builtin or terminal_issues:
@@ -460,7 +491,9 @@ class VintageStoryServerManager:
                 print("   export TERM=xterm-256color")
 
             print("\n" + "=" * 50)
-            print("Press Enter to continue anyway, or Ctrl+C to exit and install dependencies...")
+            print(
+                "Press Enter to continue anyway, or Ctrl+C to exit and install dependencies..."
+            )
 
             try:
                 input()
@@ -475,8 +508,11 @@ class VintageStoryServerManager:
         current_time = time.time()
 
         # Return cached result if still valid
-        if (self._process_info_cache is not None and
-            current_time - self._process_info_cache_time < self._process_info_cache_interval):
+        if (
+            self._process_info_cache is not None
+            and current_time - self._process_info_cache_time
+            < self._process_info_cache_interval
+        ):
             return self._process_info_cache
 
         # Check running processes - look for actual dotnet process
@@ -485,20 +521,24 @@ class VintageStoryServerManager:
         try:
             # First, get all dotnet processes
             result = subprocess.run(
-                ['pgrep', '-f', 'dotnet.*VintagestoryServer.dll'],
-                capture_output=True, text=True, timeout=1.0  # Add timeout
+                ["pgrep", "-f", "dotnet.*VintagestoryServer.dll"],
+                capture_output=True,
+                text=True,
+                timeout=1.0,  # Add timeout
             )
             if result.returncode == 0:
                 # Get the actual dotnet process PIDs
-                dotnet_pids = [int(pid) for pid in result.stdout.strip().split('\n') if pid]
+                dotnet_pids = [
+                    int(pid) for pid in result.stdout.strip().split("\n") if pid
+                ]
 
                 # Filter to only dotnet processes (not screen processes)
                 for pid in dotnet_pids:
                     try:
                         # Check if this PID is actually a dotnet process
-                        with open(f'/proc/{pid}/comm', 'r') as f:
+                        with open(f"/proc/{pid}/comm", "r") as f:
                             comm = f.read().strip()
-                        if comm == 'dotnet':
+                        if comm == "dotnet":
                             running_pids.append(pid)
                     except (FileNotFoundError, PermissionError):
                         continue
@@ -509,18 +549,22 @@ class VintageStoryServerManager:
         screen_running = False
         try:
             result = subprocess.run(
-                ['screen', '-list', self.screen_name],
-                capture_output=True, text=True, timeout=1.0  # Add timeout
+                ["screen", "-list", self.screen_name],
+                capture_output=True,
+                text=True,
+                timeout=1.0,  # Add timeout
             )
-            screen_running = result.returncode == 0 and self.screen_name in result.stdout
+            screen_running = (
+                result.returncode == 0 and self.screen_name in result.stdout
+            )
         except (subprocess.CalledProcessError, subprocess.TimeoutExpired):
             pass
 
         # Cache the result
         result = {
-            'running_pids': running_pids,
-            'screen_running': screen_running,
-            'is_running': len(running_pids) > 0 or screen_running
+            "running_pids": running_pids,
+            "screen_running": screen_running,
+            "is_running": len(running_pids) > 0 or screen_running,
         }
 
         self._process_info_cache = result
@@ -532,12 +576,12 @@ class VintageStoryServerManager:
         """Update server status"""
         process_info = self.get_process_info()
         old_status = self.status
-        self.status = "ON" if process_info['is_running'] else "OFF"
+        self.status = "ON" if process_info["is_running"] else "OFF"
 
         # If status changed, invalidate caches and force redraw
         if old_status != self.status:
             self.invalidate_caches()
-            self.mark_dirty('header')  # Header needs redraw when status changes
+            self.mark_dirty("header")  # Header needs redraw when status changes
 
         # If server just started (status changed from OFF to ON), trigger immediate player update
         if old_status == "OFF" and self.status == "ON":
@@ -546,13 +590,18 @@ class VintageStoryServerManager:
 
     def trigger_player_update(self):
         """Trigger an immediate player count update"""
+
         def _do_player_update():
             with self._player_update_lock:
-                if self.get_process_info()['is_running']:
+                if self.get_process_info()["is_running"]:
                     if self.send_command("list clients"):
                         time.sleep(0.5)  # Reduced wait time for command processing
                         self.parse_list_clients_output()
-                        self.add_command_log(self.MESSAGES['player_count_update'].format(len(self.connected_players)))
+                        self.add_command_log(
+                            self.MESSAGES["player_count_update"].format(
+                                len(self.connected_players)
+                            )
+                        )
 
         # Use thread pool instead of creating new thread every time
         self.start_background_task(_do_player_update)
@@ -562,22 +611,24 @@ class VintageStoryServerManager:
         current_time = time.time()
 
         # Return cached PID if still valid
-        if (self.cached_pid is not None and
-            current_time - self._pid_cache_time < self._pid_cache_interval):
+        if (
+            self.cached_pid is not None
+            and current_time - self._pid_cache_time < self._pid_cache_interval
+        ):
             return self.cached_pid
 
         if self.pid_update_needed:
-            if hasattr(self, '_pid_delay_needed'):
+            if hasattr(self, "_pid_delay_needed"):
                 # Wait 1 second before updating PID (for manual start)
                 time.sleep(1)
-                delattr(self, '_pid_delay_needed')
+                delattr(self, "_pid_delay_needed")
             else:
                 # Immediate update (for script startup)
                 pass
 
             process_info = self.get_process_info()
-            if process_info['running_pids']:
-                self.cached_pid = process_info['running_pids'][0]
+            if process_info["running_pids"]:
+                self.cached_pid = process_info["running_pids"][0]
             else:
                 self.cached_pid = None
             self.pid_update_needed = False
@@ -591,16 +642,22 @@ class VintageStoryServerManager:
 
     def _start_server_impl(self) -> bool:
         """Implementation of server start with error handling"""
-        if self.get_process_info()['is_running']:
+        if self.get_process_info()["is_running"]:
             return True
 
         # Validate configuration parameters for security
-        if not self.validate_input(self.screen_name, 'screen_name'):
-            self.log_security_event("INVALID_SCREEN_NAME", f"Screen name contains invalid characters: {self.screen_name}")
+        if not self.validate_input(self.screen_name, "screen_name"):
+            self.log_security_event(
+                "INVALID_SCREEN_NAME",
+                f"Screen name contains invalid characters: {self.screen_name}",
+            )
             return False
 
-        if not self.validate_input(self.data_path, 'path'):
-            self.log_security_event("INVALID_DATA_PATH", f"Data path contains invalid characters: {self.data_path}")
+        if not self.validate_input(self.data_path, "path"):
+            self.log_security_event(
+                "INVALID_DATA_PATH",
+                f"Data path contains invalid characters: {self.data_path}",
+            )
             return False
 
         # Check if service file exists
@@ -619,10 +676,21 @@ class VintageStoryServerManager:
         # Start server with secure subprocess call
         try:
             # Use direct subprocess call instead of bash -c to prevent shell injection
-            subprocess.run([
-                'screen', '-h', '1024', '-dmS', self.screen_name,
-                'dotnet', self.service, '--dataPath', self.data_path
-            ], check=True, timeout=10.0)
+            subprocess.run(
+                [
+                    "screen",
+                    "-h",
+                    "1024",
+                    "-dmS",
+                    self.screen_name,
+                    "dotnet",
+                    self.service,
+                    "--dataPath",
+                    self.data_path,
+                ],
+                check=True,
+                timeout=10.0,
+            )
             # Mark PID for update after 2 seconds (manual start)
             self.pid_update_needed = True
             self._pid_delay_needed = True
@@ -648,7 +716,7 @@ class VintageStoryServerManager:
     def _stop_server_impl(self) -> bool:
         """Implementation of server stop with error handling"""
         process_info = self.get_process_info()
-        if not process_info['is_running']:
+        if not process_info["is_running"]:
             return True
 
         try:
@@ -660,26 +728,40 @@ class VintageStoryServerManager:
 
     def send_command(self, command: str) -> bool:
         """Send a command to the server with security validation"""
-        if not self.get_process_info()['is_running']:
+        if not self.get_process_info()["is_running"]:
             return False
 
         # Validate and sanitize the command
-        if not self.validate_input(command, 'command'):
-            self.log_security_event("INVALID_COMMAND", f"Rejected command: {command[:50]}...")
+        if not self.validate_input(command, "command"):
+            self.log_security_event(
+                "INVALID_COMMAND", f"Rejected command: {command[:50]}..."
+            )
             return False
 
         sanitized_command = self.sanitize_command(command)
         if sanitized_command != command:
-            self.log_security_event("COMMAND_SANITIZED", f"Original: {command[:50]}... -> Sanitized: {sanitized_command[:50]}...")
+            self.log_security_event(
+                "COMMAND_SANITIZED",
+                f"Original: {command[:50]}... -> Sanitized: {sanitized_command[:50]}...",
+            )
 
         try:
             # Use direct subprocess call instead of bash -c to prevent shell injection
             # Escape the command properly for screen
             escaped_command = sanitized_command.replace('"', '\\"').replace("'", "\\'")
-            subprocess.run([
-                'screen', '-p', '0', '-S', self.screen_name,
-                '-X', 'eval', f'stuff "/{escaped_command}"\\015'
-            ], check=True)
+            subprocess.run(
+                [
+                    "screen",
+                    "-p",
+                    "0",
+                    "-S",
+                    self.screen_name,
+                    "-X",
+                    "eval",
+                    f'stuff "/{escaped_command}"\\015',
+                ],
+                check=True,
+            )
             return True
         except subprocess.CalledProcessError:
             return False
@@ -689,14 +771,16 @@ class VintageStoryServerManager:
         timestamp = time.strftime("%H:%M:%S")
         with self._command_lock:
             self.command_log.append(f"[{timestamp}] {message}")
-        self.mark_dirty('feedback')  # Feedback frame needs redraw when command log changes
+        self.mark_dirty(
+            "feedback"
+        )  # Feedback frame needs redraw when command log changes
 
     def force_log_refresh(self):
         """Force a complete log refresh to catch any missed lines"""
         time.sleep(0.5)  # Reduced wait time for server to start writing logs
         try:
             if os.path.exists(self.log_file):
-                with open(self.log_file, 'r', encoding='utf-8', errors='ignore') as f:
+                with open(self.log_file, "r", encoding="utf-8", errors="ignore") as f:
                     content = f.read()
                     if content:
                         lines = content.splitlines()
@@ -718,18 +802,16 @@ class VintageStoryServerManager:
             # Wait for server to stop (checking periodically instead of fixed sleep)
             wait_time = 0
             max_wait = 15  # Maximum 15 seconds wait
-            while wait_time < max_wait and self.get_process_info()['is_running']:
+            while wait_time < max_wait and self.get_process_info()["is_running"]:
                 time.sleep(0.5)  # Check every 500ms
                 wait_time += 0.5
 
             # Start new server
             if self.start_server():
                 self.update_status()
-                self.add_command_log(self.MESSAGES['server_restarted'])
+                self.add_command_log(self.MESSAGES["server_restarted"])
             else:
-                self.add_command_log(self.MESSAGES['server_restart_failed'])
-
-
+                self.add_command_log(self.MESSAGES["server_restart_failed"])
 
     def log_monitor_thread(self):
         """Background thread that continuously monitors the log file with optimized I/O"""
@@ -740,7 +822,7 @@ class VintageStoryServerManager:
                 # Read only last 50KB to get recent lines
                 read_size = min(50000, file_size)
 
-                with open(self.log_file, 'r', encoding='utf-8', errors='ignore') as f:
+                with open(self.log_file, "r", encoding="utf-8", errors="ignore") as f:
                     if file_size > read_size:
                         f.seek(max(0, file_size - read_size))
                         # Read a bit more to ensure complete lines
@@ -783,7 +865,9 @@ class VintageStoryServerManager:
                     if current_size > self.last_log_size:
                         # Read only new content
                         try:
-                            with open(self.log_file, 'r', encoding='utf-8', errors='ignore') as f:
+                            with open(
+                                self.log_file, "r", encoding="utf-8", errors="ignore"
+                            ) as f:
                                 f.seek(self.last_log_size)
                                 new_content = f.read()
 
@@ -791,49 +875,58 @@ class VintageStoryServerManager:
                                     new_lines = new_content.splitlines()
                                     with self.log_lock:
                                         self.log_lines.extend(new_lines)
-                                        self.mark_dirty('log')  # Log area needs redraw
+                                        self.mark_dirty("log")  # Log area needs redraw
 
                                 # Update size after successful read
                                 self.last_log_size = current_size
 
-                        except (IOError, OSError) as e:
+                        except (IOError, OSError):
                             # If file read fails, try to recover by reading from beginning
                             try:
-                                with open(self.log_file, 'r', encoding='utf-8', errors='ignore') as f:
+                                with open(
+                                    self.log_file,
+                                    "r",
+                                    encoding="utf-8",
+                                    errors="ignore",
+                                ) as f:
                                     new_content = f.read()
                                     if new_content:
                                         new_lines = new_content.splitlines()
                                         with self.log_lock:
                                             self.log_lines.clear()
                                             self.log_lines.extend(new_lines)
-                                            self.mark_dirty('log')  # Log area needs redraw
+                                            self.mark_dirty(
+                                                "log"
+                                            )  # Log area needs redraw
                                         self.last_log_size = current_size
-                            except (IOError, OSError, UnicodeDecodeError) as e:
+                            except (IOError, OSError, UnicodeDecodeError):
                                 # Log file read error, continue monitoring
                                 pass
 
                     elif current_size < self.last_log_size:
                         # Log file was truncated or rotated
                         try:
-                            with open(self.log_file, 'r', encoding='utf-8', errors='ignore') as f:
+                            with open(
+                                self.log_file, "r", encoding="utf-8", errors="ignore"
+                            ) as f:
                                 new_content = f.read()
                                 if new_content:
                                     new_lines = new_content.splitlines()
                                     with self.log_lock:
                                         self.log_lines.clear()
                                         self.log_lines.extend(new_lines)
-                                        self.mark_dirty('log')  # Log area needs redraw
+                                        self.mark_dirty("log")  # Log area needs redraw
                                     self.last_log_size = current_size
-                        except (IOError, OSError, UnicodeDecodeError) as e:
+                        except (IOError, OSError, UnicodeDecodeError):
                             # Log file read error, continue monitoring
                             pass
 
                 # Sleep between checks to reduce CPU usage
                 time.sleep(check_interval)
 
-            except (IOError, OSError) as e:
+            except (IOError, OSError):
                 time.sleep(check_interval)
-            except Exception as e:
+            except Exception:
                 time.sleep(check_interval)
 
     def start_log_monitor(self):
@@ -867,18 +960,24 @@ class VintageStoryServerManager:
             if cached_pid is not None:
                 try:
                     result = subprocess.run(
-                        ['ps', '-p', str(cached_pid), '-o', '%cpu'],
-                        capture_output=True, text=True, timeout=1.0
+                        ["ps", "-p", str(cached_pid), "-o", "%cpu"],
+                        capture_output=True,
+                        text=True,
+                        timeout=1.0,
                     )
                     if result.returncode == 0:
-                        lines = result.stdout.strip().split('\n')
+                        lines = result.stdout.strip().split("\n")
                         if len(lines) >= 2:
                             self.cached_cpu_percent = lines[1].strip()
                         else:
                             self.cached_cpu_percent = "N/A"
                     else:
                         self.cached_cpu_percent = "N/A"
-                except (subprocess.CalledProcessError, ValueError, subprocess.TimeoutExpired):
+                except (
+                    subprocess.CalledProcessError,
+                    ValueError,
+                    subprocess.TimeoutExpired,
+                ):
                     self.cached_cpu_percent = "N/A"
             else:
                 self.cached_cpu_percent = "N/A"
@@ -898,18 +997,24 @@ class VintageStoryServerManager:
             if cached_pid is not None:
                 try:
                     result = subprocess.run(
-                        ['ps', '-p', str(cached_pid), '-o', '%mem'],
-                        capture_output=True, text=True, timeout=1.0
+                        ["ps", "-p", str(cached_pid), "-o", "%mem"],
+                        capture_output=True,
+                        text=True,
+                        timeout=1.0,
                     )
                     if result.returncode == 0:
-                        lines = result.stdout.strip().split('\n')
+                        lines = result.stdout.strip().split("\n")
                         if len(lines) >= 2:
                             self.cached_mem_percent = lines[1].strip()
                         else:
                             self.cached_mem_percent = "N/A"
                     else:
                         self.cached_mem_percent = "N/A"
-                except (subprocess.CalledProcessError, ValueError, subprocess.TimeoutExpired):
+                except (
+                    subprocess.CalledProcessError,
+                    ValueError,
+                    subprocess.TimeoutExpired,
+                ):
                     self.cached_mem_percent = "N/A"
             else:
                 self.cached_mem_percent = "N/A"
@@ -942,7 +1047,7 @@ class VintageStoryServerManager:
 
                 # Only check server status periodically to reduce subprocess calls
                 if current_time - last_server_check >= server_check_interval:
-                    server_running = self.get_process_info()['is_running']
+                    server_running = self.get_process_info()["is_running"]
                     last_server_check = current_time
                 else:
                     # Use cached server status
@@ -959,7 +1064,7 @@ class VintageStoryServerManager:
                     # Server not running, clear player list
                     self.connected_players.clear()
                     self.player_count = 0
-                    self.mark_dirty('players')  # Player list needs redraw
+                    self.mark_dirty("players")  # Player list needs redraw
 
                 # Sleep for the update interval
                 time.sleep(self.player_update_interval)
@@ -975,7 +1080,9 @@ class VintageStoryServerManager:
 
     def start_player_update_thread(self):
         """Start the background player update thread"""
-        self.player_update_thread = threading.Thread(target=self.player_update_thread, daemon=True)
+        self.player_update_thread = threading.Thread(
+            target=self.player_update_thread, daemon=True
+        )
         self.player_update_thread.start()
 
         # Do an initial player count check after a short delay
@@ -984,12 +1091,12 @@ class VintageStoryServerManager:
     def initial_player_check(self):
         """Initial player count check when script starts"""
         # Check if server is running and do initial player count immediately
-        if self.get_process_info()['is_running']:
-            self.add_command_log(self.MESSAGES['initial_player_check'])
+        if self.get_process_info()["is_running"]:
+            self.add_command_log(self.MESSAGES["initial_player_check"])
             # Use the same trigger method for consistency
             self.trigger_player_update()
         else:
-            self.add_command_log(self.MESSAGES['no_initial_check'])
+            self.add_command_log(self.MESSAGES["no_initial_check"])
 
     def stop_player_update_thread(self):
         """Stop the background player update thread"""
@@ -1008,7 +1115,7 @@ class VintageStoryServerManager:
 
             # Read only the last 2KB of the file instead of entire file
             chunk_size = 2048
-            with open(self.log_file, 'r', encoding='utf-8', errors='ignore') as f:
+            with open(self.log_file, "r", encoding="utf-8", errors="ignore") as f:
                 if file_size > chunk_size:
                     f.seek(max(0, file_size - chunk_size))
                     # Read a bit more to ensure we get complete lines
@@ -1028,7 +1135,11 @@ class VintageStoryServerManager:
                 line = line.strip()
 
                 # Handle /list clients output format: "[2] Jaidaken [::ffff:192.168.1.239]:55786"
-                if line.startswith("[") and "] " in line and "[" in line[line.find("] ")+2:]:
+                if (
+                    line.startswith("[")
+                    and "] " in line
+                    and "[" in line[line.find("] ") + 2 :]
+                ):
                     try:
                         # Extract player name between "] " and " ["
                         parts = line.split("] ")
@@ -1036,14 +1147,17 @@ class VintageStoryServerManager:
                             player_part = parts[1]
                             if " [" in player_part:
                                 player_name = player_part.split(" [")[0].strip()
-                                if player_name and player_name not in self.connected_players:
+                                if (
+                                    player_name
+                                    and player_name not in self.connected_players
+                                ):
                                     self.connected_players.add(player_name)
                     except Exception:
                         pass  # Skip malformed lines
 
-                                            # Update player count
+                        # Update player count
             self.player_count = len(self.connected_players)
-            self.mark_dirty('players')  # Player list needs redraw
+            self.mark_dirty("players")  # Player list needs redraw
 
         except (IOError, OSError, UnicodeDecodeError) as e:
             # Log file read error
@@ -1061,7 +1175,7 @@ class VintageStoryServerManager:
         """Draw the header with title and status using optimized string formatting"""
         try:
             # Check if header needs redrawing
-            if not self.is_dirty('header'):
+            if not self.is_dirty("header"):
                 return
 
             # Get current values for comparison
@@ -1073,7 +1187,7 @@ class VintageStoryServerManager:
             # Check if we need to redraw (only if values changed)
             current_values = (current_status, cached_pid, cpu_percent, mem_percent)
             if self._last_status == current_values and not self._needs_redraw:
-                self.clear_dirty('header')
+                self.clear_dirty("header")
                 return  # No change, skip drawing
 
             self._last_status = current_values
@@ -1093,38 +1207,86 @@ class VintageStoryServerManager:
 
             # Calculate positions using string formatting
             title_start = 2
-            status_start = self.max_x - len(status_text) - len(pid_text) - len(cpu_text) - len(mem_text) - 2
+            status_start = (
+                self.max_x
+                - len(status_text)
+                - len(pid_text)
+                - len(cpu_text)
+                - len(mem_text)
+                - 2
+            )
 
             # Build header using string formatting instead of concatenation
             header_parts = [
                 (" " * title_start, TerminalColors.BRIGHT_CYAN),
                 (title, TerminalColors.BRIGHT_WHITE),
-                (" " * (status_start - title_start - len(title)), TerminalColors.BRIGHT_CYAN),
-                (status_text, TerminalColors.BRIGHT_GREEN if self.status == "ON" else TerminalColors.BRIGHT_RED),
-                (pid_text, TerminalColors.BRIGHT_YELLOW if cached_pid is not None else TerminalColors.BRIGHT_BLACK),
-                (cpu_text, TerminalColors.BRIGHT_MAGENTA if cached_pid is not None else TerminalColors.BRIGHT_BLACK),
-                (mem_text, TerminalColors.BRIGHT_CYAN if cached_pid is not None else TerminalColors.BRIGHT_BLACK),
-                (" " * (self.max_x - status_start - len(status_text) - len(pid_text) - len(cpu_text) - len(mem_text)), TerminalColors.BRIGHT_CYAN)
+                (
+                    " " * (status_start - title_start - len(title)),
+                    TerminalColors.BRIGHT_CYAN,
+                ),
+                (
+                    status_text,
+                    TerminalColors.BRIGHT_GREEN
+                    if self.status == "ON"
+                    else TerminalColors.BRIGHT_RED,
+                ),
+                (
+                    pid_text,
+                    TerminalColors.BRIGHT_YELLOW
+                    if cached_pid is not None
+                    else TerminalColors.BRIGHT_BLACK,
+                ),
+                (
+                    cpu_text,
+                    TerminalColors.BRIGHT_MAGENTA
+                    if cached_pid is not None
+                    else TerminalColors.BRIGHT_BLACK,
+                ),
+                (
+                    mem_text,
+                    TerminalColors.BRIGHT_CYAN
+                    if cached_pid is not None
+                    else TerminalColors.BRIGHT_BLACK,
+                ),
+                (
+                    " "
+                    * (
+                        self.max_x
+                        - status_start
+                        - len(status_text)
+                        - len(pid_text)
+                        - len(cpu_text)
+                        - len(mem_text)
+                    ),
+                    TerminalColors.BRIGHT_CYAN,
+                ),
             ]
 
             # Build colored header efficiently
-            colored_header = "".join(color + text for text, color in header_parts) + TerminalColors.RESET
+            colored_header = (
+                "".join(color + text for text, color in header_parts)
+                + TerminalColors.RESET
+            )
 
             sys.stdout.write(TerminalControl.move_cursor(1, 1) + colored_header)
-            self.clear_dirty('header')
-        except (OSError, IOError) as e:
+            self.clear_dirty("header")
+        except (OSError, IOError):
             # Terminal I/O error in header drawing
-            sys.stdout.write(TerminalControl.move_cursor(1, 1) + "VINTAGESTORY SERVER MANAGER")
-            self.clear_dirty('header')
-        except Exception as e:
+            sys.stdout.write(
+                TerminalControl.move_cursor(1, 1) + "VINTAGESTORY SERVER MANAGER"
+            )
+            self.clear_dirty("header")
+        except Exception:
             # Unexpected error in header drawing
-            sys.stdout.write(TerminalControl.move_cursor(1, 1) + "VINTAGESTORY SERVER MANAGER")
-            self.clear_dirty('header')
+            sys.stdout.write(
+                TerminalControl.move_cursor(1, 1) + "VINTAGESTORY SERVER MANAGER"
+            )
+            self.clear_dirty("header")
 
     def draw_feedback_frame(self):
         """Draw the command log frame between log and help areas with dirty region tracking"""
         # Check if feedback frame needs redrawing
-        if not self.is_dirty('feedback'):
+        if not self.is_dirty("feedback"):
             return
 
         # Calculate command log area position
@@ -1142,13 +1304,15 @@ class VintageStoryServerManager:
 
         # Check if command content changed
         if latest_message == self._last_command_content and not self._needs_redraw:
-            self.clear_dirty('feedback')
+            self.clear_dirty("feedback")
             return  # No change, skip drawing
 
         self._last_command_content = latest_message
 
         # Clear command log area (only up to player list)
-        sys.stdout.write(TerminalControl.move_cursor(log_y + 1, 1) + TerminalControl.clear_line())
+        sys.stdout.write(
+            TerminalControl.move_cursor(log_y + 1, 1) + TerminalControl.clear_line()
+        )
 
         # Show the most recent command log entry
         with self._command_lock:
@@ -1157,17 +1321,22 @@ class VintageStoryServerManager:
                 # Truncate if too long (account for player list)
                 max_length = player_list_x - 4
                 if len(latest_message) > max_length:
-                    latest_message = latest_message[:max_length - 3] + "..."
+                    latest_message = latest_message[: max_length - 3] + "..."
 
                 message_x = max(2, (player_list_x - len(latest_message)) // 2)
-                sys.stdout.write(TerminalControl.move_cursor(log_y + 1, message_x) + TerminalColors.BRIGHT_CYAN + latest_message + TerminalColors.RESET)
+                sys.stdout.write(
+                    TerminalControl.move_cursor(log_y + 1, message_x)
+                    + TerminalColors.BRIGHT_CYAN
+                    + latest_message
+                    + TerminalColors.RESET
+                )
 
-        self.clear_dirty('feedback')
+        self.clear_dirty("feedback")
 
     def draw_borders(self):
         """Draw simple borders around each section with dirty region tracking"""
         # Check if borders need redrawing
-        if not self.is_dirty('borders'):
+        if not self.is_dirty("borders"):
             return
 
         # Check if terminal size changed
@@ -1175,24 +1344,64 @@ class VintageStoryServerManager:
         if current_size != self._last_terminal_size:
             self._last_terminal_size = current_size
         elif not self._needs_redraw:
-            self.clear_dirty('borders')
+            self.clear_dirty("borders")
             return
 
         # Simple border function
         def draw_box(x, y, width, height):
             # Top and bottom
             for i in range(width):
-                sys.stdout.write(TerminalControl.move_cursor(y, x + i) + TerminalColors.BRIGHT_BLUE + "-" + TerminalColors.RESET)
-                sys.stdout.write(TerminalControl.move_cursor(y + height - 1, x + i) + TerminalColors.BRIGHT_BLUE + "-" + TerminalColors.RESET)
+                sys.stdout.write(
+                    TerminalControl.move_cursor(y, x + i)
+                    + TerminalColors.BRIGHT_BLUE
+                    + "-"
+                    + TerminalColors.RESET
+                )
+                sys.stdout.write(
+                    TerminalControl.move_cursor(y + height - 1, x + i)
+                    + TerminalColors.BRIGHT_BLUE
+                    + "-"
+                    + TerminalColors.RESET
+                )
             # Left and right
             for i in range(height):
-                sys.stdout.write(TerminalControl.move_cursor(y + i, x) + TerminalColors.BRIGHT_BLUE + "|" + TerminalColors.RESET)
-                sys.stdout.write(TerminalControl.move_cursor(y + i, x + width - 1) + TerminalColors.BRIGHT_BLUE + "|" + TerminalColors.RESET)
+                sys.stdout.write(
+                    TerminalControl.move_cursor(y + i, x)
+                    + TerminalColors.BRIGHT_BLUE
+                    + "|"
+                    + TerminalColors.RESET
+                )
+                sys.stdout.write(
+                    TerminalControl.move_cursor(y + i, x + width - 1)
+                    + TerminalColors.BRIGHT_BLUE
+                    + "|"
+                    + TerminalColors.RESET
+                )
             # Corners
-            sys.stdout.write(TerminalControl.move_cursor(y, x) + TerminalColors.BRIGHT_BLUE + "+" + TerminalColors.RESET)
-            sys.stdout.write(TerminalControl.move_cursor(y, x + width - 1) + TerminalColors.BRIGHT_BLUE + "+" + TerminalColors.RESET)
-            sys.stdout.write(TerminalControl.move_cursor(y + height - 1, x) + TerminalColors.BRIGHT_BLUE + "+" + TerminalColors.RESET)
-            sys.stdout.write(TerminalControl.move_cursor(y + height - 1, x + width - 1) + TerminalColors.BRIGHT_BLUE + "+" + TerminalColors.RESET)
+            sys.stdout.write(
+                TerminalControl.move_cursor(y, x)
+                + TerminalColors.BRIGHT_BLUE
+                + "+"
+                + TerminalColors.RESET
+            )
+            sys.stdout.write(
+                TerminalControl.move_cursor(y, x + width - 1)
+                + TerminalColors.BRIGHT_BLUE
+                + "+"
+                + TerminalColors.RESET
+            )
+            sys.stdout.write(
+                TerminalControl.move_cursor(y + height - 1, x)
+                + TerminalColors.BRIGHT_BLUE
+                + "+"
+                + TerminalColors.RESET
+            )
+            sys.stdout.write(
+                TerminalControl.move_cursor(y + height - 1, x + width - 1)
+                + TerminalColors.BRIGHT_BLUE
+                + "+"
+                + TerminalColors.RESET
+            )
 
         # Draw main log area border
         log_width = self.max_x - 25
@@ -1218,7 +1427,7 @@ class VintageStoryServerManager:
     def draw_log_area(self):
         """Draw the log display area with color coding and line wrapping using dirty region tracking"""
         # Check if log area needs redrawing
-        if not self.is_dirty('log'):
+        if not self.is_dirty("log"):
             return
 
         log_start_y = 4
@@ -1261,7 +1470,7 @@ class VintageStoryServerManager:
         # Check if log content changed
         current_content = "".join(display_lines)
         if current_content == self._last_log_content and not self._needs_redraw:
-            self.clear_dirty('log')
+            self.clear_dirty("log")
             return  # No change, skip drawing
 
         self._last_log_content = current_content
@@ -1285,32 +1494,43 @@ class VintageStoryServerManager:
             color = self.get_log_line_color(line)
 
             # Update last color for indented lines (only if not indented)
-            if not line.startswith(' ') and not line.startswith('\t'):
+            if not line.startswith(" ") and not line.startswith("\t"):
                 self.last_log_color = color
 
             # Wrap long lines (account for border)
-            wrapped_lines = self.wrap_line(clean_line, log_width - 3)  # -3 for border spacing
+            wrapped_lines = self.wrap_line(
+                clean_line, log_width - 3
+            )  # -3 for border spacing
 
             for wrapped_line in wrapped_lines:
                 if current_y >= log_end_y or lines_drawn >= log_height:
                     break
 
                 # Truncate if still too long
-                display_line = wrapped_line[:log_width - 3] if len(wrapped_line) > log_width - 3 else wrapped_line
+                display_line = (
+                    wrapped_line[: log_width - 3]
+                    if len(wrapped_line) > log_width - 3
+                    else wrapped_line
+                )
 
                 # Draw with proper spacing from left border
-                sys.stdout.write(TerminalControl.move_cursor(current_y, 2) + color + display_line + TerminalColors.RESET)
+                sys.stdout.write(
+                    TerminalControl.move_cursor(current_y, 2)
+                    + color
+                    + display_line
+                    + TerminalColors.RESET
+                )
                 current_y += 1
                 lines_drawn += 1
 
-        self.clear_dirty('log')
+        self.clear_dirty("log")
 
     def get_log_line_color(self, line: str) -> str:
         """Get color for log line based on its type"""
         line_upper = line.upper()
 
         # Check for indented lines first (stack traces, etc.)
-        if line.startswith(' ') or line.startswith('\t'):
+        if line.startswith(" ") or line.startswith("\t"):
             # Indented lines should inherit color from previous line
             return self.last_log_color
 
@@ -1328,7 +1548,11 @@ class VintageStoryServerManager:
             return TerminalColors.BRIGHT_MAGENTA  # Player events
         elif "List of online Players" in line:
             return TerminalColors.BRIGHT_WHITE  # Player list header
-        elif line.strip().startswith("[") and "] " in line and "[" in line[line.find("] ")+2:]:
+        elif (
+            line.strip().startswith("[")
+            and "] " in line
+            and "[" in line[line.find("] ") + 2 :]
+        ):
             return TerminalColors.BRIGHT_WHITE  # Player entries from /list clients
         else:
             return TerminalColors.WHITE  # Default color
@@ -1368,7 +1592,7 @@ class VintageStoryServerManager:
     def draw_player_list(self):
         """Draw the player list panel on the right side with dirty region tracking"""
         # Check if player list needs redrawing
-        if not self.is_dirty('players'):
+        if not self.is_dirty("players"):
             return
 
         # Get current players
@@ -1376,9 +1600,12 @@ class VintageStoryServerManager:
         player_count = len(players)
 
         # Check if player data changed
-        if (player_count == self._last_player_count and
-            players == self._last_player_list and not self._needs_redraw):
-            self.clear_dirty('players')
+        if (
+            player_count == self._last_player_count
+            and players == self._last_player_list
+            and not self._needs_redraw
+        ):
+            self.clear_dirty("players")
             return
 
         self._last_player_count = player_count
@@ -1393,36 +1620,73 @@ class VintageStoryServerManager:
         # Draw title
         title = " 👥 PLAYERS "
         title_x = player_list_x + (player_list_width - len(title)) // 2
-        sys.stdout.write(TerminalControl.move_cursor(player_list_start_y + 1, title_x) + TerminalColors.BRIGHT_WHITE + title + TerminalColors.RESET)
+        sys.stdout.write(
+            TerminalControl.move_cursor(player_list_start_y + 1, title_x)
+            + TerminalColors.BRIGHT_WHITE
+            + title
+            + TerminalColors.RESET
+        )
 
         # Draw player count
         count_text = f" ONLINE: {player_count} "
         count_x = player_list_x + (player_list_width - len(count_text)) // 2
-        count_color = TerminalColors.BRIGHT_GREEN if player_count > 0 else TerminalColors.BRIGHT_BLACK
-        sys.stdout.write(TerminalControl.move_cursor(player_list_start_y + 2, count_x) + count_color + count_text + TerminalColors.RESET)
+        count_color = (
+            TerminalColors.BRIGHT_GREEN
+            if player_count > 0
+            else TerminalColors.BRIGHT_BLACK
+        )
+        sys.stdout.write(
+            TerminalControl.move_cursor(player_list_start_y + 2, count_x)
+            + count_color
+            + count_text
+            + TerminalColors.RESET
+        )
 
         # Clear player list area
         for y in range(player_list_start_y + 3, player_list_end_y):
-            sys.stdout.write(TerminalControl.move_cursor(y, player_list_x + 1) + " " * (player_list_width - 2))
+            sys.stdout.write(
+                TerminalControl.move_cursor(y, player_list_x + 1)
+                + " " * (player_list_width - 2)
+            )
 
         # Draw player names
         if players:
             for i, player in enumerate(players):
-                if player_list_start_y + 3 + i < player_list_end_y:  # Make sure we don't overflow
+                if (
+                    player_list_start_y + 3 + i < player_list_end_y
+                ):  # Make sure we don't overflow
                     # Truncate long player names
-                    display_name = player[:player_list_width - 6] if len(player) > player_list_width - 6 else player
+                    display_name = (
+                        player[: player_list_width - 6]
+                        if len(player) > player_list_width - 6
+                        else player
+                    )
                     player_text = f" 🟢 {display_name} "
                     if len(player) > player_list_width - 6:
                         player_text = player_text[:-3] + "… "
 
-                    sys.stdout.write(TerminalControl.move_cursor(player_list_start_y + 3 + i, player_list_x + 1) + TerminalColors.BRIGHT_CYAN + player_text + TerminalColors.RESET)
+                    sys.stdout.write(
+                        TerminalControl.move_cursor(
+                            player_list_start_y + 3 + i, player_list_x + 1
+                        )
+                        + TerminalColors.BRIGHT_CYAN
+                        + player_text
+                        + TerminalColors.RESET
+                    )
         else:
             # Show "No players" message
             no_players_text = " 🔴 NO PLAYERS "
-            no_players_x = player_list_x + (player_list_width - len(no_players_text)) // 2
-            sys.stdout.write(TerminalControl.move_cursor(player_list_start_y + 3, no_players_x) + TerminalColors.BRIGHT_BLACK + no_players_text + TerminalColors.RESET)
+            no_players_x = (
+                player_list_x + (player_list_width - len(no_players_text)) // 2
+            )
+            sys.stdout.write(
+                TerminalControl.move_cursor(player_list_start_y + 3, no_players_x)
+                + TerminalColors.BRIGHT_BLACK
+                + no_players_text
+                + TerminalColors.RESET
+            )
 
-        self.clear_dirty('players')
+        self.clear_dirty("players")
 
     def scroll_log_up(self):
         """Scroll log up (show older lines) - faster scrolling"""
@@ -1432,14 +1696,16 @@ class VintageStoryServerManager:
 
             if total_lines > log_height:
                 # Scroll by 3 lines instead of 1 for faster navigation
-                self.scroll_offset = min(self.scroll_offset + 3, total_lines - log_height)
-                self.mark_dirty('log')  # Mark log area for redraw
+                self.scroll_offset = min(
+                    self.scroll_offset + 3, total_lines - log_height
+                )
+                self.mark_dirty("log")  # Mark log area for redraw
 
     def scroll_log_down(self):
         """Scroll log down (show newer lines) - faster scrolling"""
         # Scroll by 3 lines instead of 1 for faster navigation
         self.scroll_offset = max(0, self.scroll_offset - 3)
-        self.mark_dirty('log')  # Mark log area for redraw
+        self.mark_dirty("log")  # Mark log area for redraw
 
     def scroll_log_page_up(self):
         """Scroll log up by one page - show more content"""
@@ -1450,8 +1716,10 @@ class VintageStoryServerManager:
             if total_lines > log_height:
                 # Scroll by 75% of visible area for better page navigation
                 page_size = max(1, int(log_height * 0.75))
-                self.scroll_offset = min(self.scroll_offset + page_size, total_lines - log_height)
-                self.mark_dirty('log')  # Mark log area for redraw
+                self.scroll_offset = min(
+                    self.scroll_offset + page_size, total_lines - log_height
+                )
+                self.mark_dirty("log")  # Mark log area for redraw
 
     def scroll_log_page_down(self):
         """Scroll log down by one page - show more content"""
@@ -1459,7 +1727,7 @@ class VintageStoryServerManager:
         # Scroll by 75% of visible area for better page navigation
         page_size = max(1, int(log_height * 0.75))
         self.scroll_offset = max(0, self.scroll_offset - page_size)
-        self.mark_dirty('log')  # Mark log area for redraw
+        self.mark_dirty("log")  # Mark log area for redraw
 
     def scroll_log_home(self):
         """Scroll to the beginning of the log (oldest entries)"""
@@ -1470,24 +1738,24 @@ class VintageStoryServerManager:
             if total_lines > log_height:
                 # Show the oldest entries (beginning of log)
                 self.scroll_offset = total_lines - log_height
-                self.mark_dirty('log')  # Mark log area for redraw
+                self.mark_dirty("log")  # Mark log area for redraw
 
     def scroll_log_end(self):
         """Scroll to the end of the log (latest lines)"""
         # Show the newest entries (end of log)
         self.scroll_offset = 0
-        self.mark_dirty('log')  # Mark log area for redraw
+        self.mark_dirty("log")  # Mark log area for redraw
 
     def draw_help_area(self):
         """Draw the help/command area with dirty region tracking"""
         # Check if help area needs redrawing
-        if not self.is_dirty('help'):
+        if not self.is_dirty("help"):
             return
 
         # Check if terminal size changed
         current_size = (self.max_y, self.max_x)
         if current_size == self._last_terminal_size and not self._needs_redraw:
-            self.clear_dirty('help')
+            self.clear_dirty("help")
             return
 
         help_y = self.max_y - 3  # Adjusted for feedback frame
@@ -1500,34 +1768,55 @@ class VintageStoryServerManager:
         scroll_text = " 📜 SCROLL: ↑↓ PgUp/PgDn Home/End "
 
         # Clear help area (only up to player list)
-        sys.stdout.write(TerminalControl.move_cursor(help_y, 1) + TerminalControl.clear_line())
-        sys.stdout.write(TerminalControl.move_cursor(help_y + 1, 1) + TerminalControl.clear_line())
-        sys.stdout.write(TerminalControl.move_cursor(help_y + 2, 1) + TerminalControl.clear_line())
+        sys.stdout.write(
+            TerminalControl.move_cursor(help_y, 1) + TerminalControl.clear_line()
+        )
+        sys.stdout.write(
+            TerminalControl.move_cursor(help_y + 1, 1) + TerminalControl.clear_line()
+        )
+        sys.stdout.write(
+            TerminalControl.move_cursor(help_y + 2, 1) + TerminalControl.clear_line()
+        )
 
         # Draw help text (truncate if too long)
         max_length = player_list_x - 4
         if len(help_text) > max_length:
-            help_text = help_text[:max_length - 3] + "..."
+            help_text = help_text[: max_length - 3] + "..."
         if len(server_text) > max_length:
-            server_text = server_text[:max_length - 3] + "..."
+            server_text = server_text[: max_length - 3] + "..."
         if len(scroll_text) > max_length:
-            scroll_text = scroll_text[:max_length - 3] + "..."
+            scroll_text = scroll_text[: max_length - 3] + "..."
 
-        sys.stdout.write(TerminalControl.move_cursor(help_y, 2) + TerminalColors.BRIGHT_MAGENTA + help_text + TerminalColors.RESET)
-        sys.stdout.write(TerminalControl.move_cursor(help_y + 1, 2) + TerminalColors.BRIGHT_MAGENTA + server_text + TerminalColors.RESET)
-        sys.stdout.write(TerminalControl.move_cursor(help_y + 2, 2) + TerminalColors.BRIGHT_CYAN + scroll_text + TerminalColors.RESET)
+        sys.stdout.write(
+            TerminalControl.move_cursor(help_y, 2)
+            + TerminalColors.BRIGHT_MAGENTA
+            + help_text
+            + TerminalColors.RESET
+        )
+        sys.stdout.write(
+            TerminalControl.move_cursor(help_y + 1, 2)
+            + TerminalColors.BRIGHT_MAGENTA
+            + server_text
+            + TerminalColors.RESET
+        )
+        sys.stdout.write(
+            TerminalControl.move_cursor(help_y + 2, 2)
+            + TerminalColors.BRIGHT_CYAN
+            + scroll_text
+            + TerminalColors.RESET
+        )
 
-        self.clear_dirty('help')
+        self.clear_dirty("help")
 
     def draw_input_area(self):
         """Draw the command input area with dirty region tracking"""
         # Check if input area needs redrawing
-        if not self.is_dirty('input'):
+        if not self.is_dirty("input"):
             return
 
         # Check if command buffer changed
         if self.command_buffer == self._last_command_buffer and not self._needs_redraw:
-            self.clear_dirty('input')
+            self.clear_dirty("input")
             return  # No change, skip drawing
 
         self._last_command_buffer = self.command_buffer
@@ -1538,27 +1827,36 @@ class VintageStoryServerManager:
         player_list_x = self.max_x - 23  # Start 23 columns from right edge
 
         # Clear input area (only up to player list)
-        sys.stdout.write(TerminalControl.move_cursor(input_y, 1) + TerminalControl.clear_line())
+        sys.stdout.write(
+            TerminalControl.move_cursor(input_y, 1) + TerminalControl.clear_line()
+        )
 
         # Draw input prompt and buffer using string formatting
         prompt = " 💻 COMMAND: "
         max_length = player_list_x - len(prompt) - 3
-        display_buffer = self.command_buffer[:max_length] if len(self.command_buffer) > max_length else self.command_buffer
+        display_buffer = (
+            self.command_buffer[:max_length]
+            if len(self.command_buffer) > max_length
+            else self.command_buffer
+        )
 
         input_line = prompt + display_buffer
         if len(self.command_buffer) > len(display_buffer):
             input_line += "…"
 
-        sys.stdout.write(TerminalControl.move_cursor(input_y, 2) + TerminalColors.BRIGHT_GREEN + input_line + TerminalColors.RESET)
+        sys.stdout.write(
+            TerminalControl.move_cursor(input_y, 2)
+            + TerminalColors.BRIGHT_GREEN
+            + input_line
+            + TerminalColors.RESET
+        )
 
         # Position cursor
         cursor_x = len(prompt) + len(self.command_buffer)
         if cursor_x < player_list_x - 1:
             sys.stdout.write(TerminalControl.move_cursor(input_y, cursor_x + 2))
 
-        self.clear_dirty('input')
-
-
+        self.clear_dirty("input")
 
     def handle_input(self) -> bool:
         """Handle user input with simplified, efficient processing"""
@@ -1573,7 +1871,9 @@ class VintageStoryServerManager:
                 input_ready = select.select([sys.stdin], [], [], self.input_timeout)[0]
             except OSError:
                 # Fallback to longer timeout if system call fails
-                input_ready = select.select([sys.stdin], [], [], self.input_timeout_fallback)[0]
+                input_ready = select.select(
+                    [sys.stdin], [], [], self.input_timeout_fallback
+                )[0]
 
             if input_ready:
                 key = sys.stdin.read(1)
@@ -1581,31 +1881,31 @@ class VintageStoryServerManager:
                 if not key:
                     return True
 
-                if key == '\x1b':  # ESC sequence
+                if key == "\x1b":  # ESC sequence
                     return self.handle_escape_sequence()
 
-                elif key == '\r' or key == '\n':  # Enter
+                elif key == "\r" or key == "\n":  # Enter
                     self.process_command()
                     self.command_buffer = ""
-                    self.mark_dirty('input')
+                    self.mark_dirty("input")
                     return True
 
-                elif key == '\x7f' or key == '\x08':  # Backspace
+                elif key == "\x7f" or key == "\x08":  # Backspace
                     if self.command_buffer:
                         self.command_buffer = self.command_buffer[:-1]
-                        self.mark_dirty('input')
+                        self.mark_dirty("input")
                     return True
 
-                elif key == '\x03':  # Ctrl+C
+                elif key == "\x03":  # Ctrl+C
                     return False
 
-                elif key == '\x1a':  # Ctrl+Z
+                elif key == "\x1a":  # Ctrl+Z
                     return False
 
                 elif key.isprintable():
                     if len(self.command_buffer) < self.command_buffer_max:
                         self.command_buffer += key
-                        self.mark_dirty('input')
+                        self.mark_dirty("input")
                     return True
                 else:
                     # Unknown key - consume and ignore
@@ -1627,17 +1927,17 @@ class VintageStoryServerManager:
         try:
             # Read the next character with consistent timeout
             if not select.select([sys.stdin], [], [], self.input_timeout)[0]:
-                self.escape_buffer = '\x1b'
+                self.escape_buffer = "\x1b"
                 return True
 
             next_char = sys.stdin.read(1)
-            self.escape_buffer = '\x1b' + next_char
+            self.escape_buffer = "\x1b" + next_char
 
-            if next_char == '[':  # Control sequence
+            if next_char == "[":  # Control sequence
                 return self.handle_control_sequence()
-            elif next_char == 'O':  # Function key sequence
+            elif next_char == "O":  # Function key sequence
                 return self.handle_function_key()
-            elif next_char == 'M':  # Mouse event (disabled for SSH stability)
+            elif next_char == "M":  # Mouse event (disabled for SSH stability)
                 self.escape_buffer = ""
                 return True
             else:
@@ -1660,14 +1960,14 @@ class VintageStoryServerManager:
             self.escape_buffer += seq
 
             # Handle multi-character sequences (Page Up/Down)
-            if seq in ['5', '6']:
+            if seq in ["5", "6"]:
                 if not select.select([sys.stdin], [], [], self.input_timeout)[0]:
                     return True
 
                 next_char = sys.stdin.read(1)
-                if next_char == '~':
+                if next_char == "~":
                     self.escape_buffer += next_char
-                    action = self.ESCAPE_SEQUENCES.get(self.escape_buffer, 'ignore')
+                    action = self.ESCAPE_SEQUENCES.get(self.escape_buffer, "ignore")
                     self.execute_action(action)
                     self.escape_buffer = ""
                     return True
@@ -1677,7 +1977,7 @@ class VintageStoryServerManager:
                     return True
 
             # Handle single-character sequences
-            action = self.ESCAPE_SEQUENCES.get(self.escape_buffer, 'ignore')
+            action = self.ESCAPE_SEQUENCES.get(self.escape_buffer, "ignore")
             self.execute_action(action)
             self.escape_buffer = ""
             return True
@@ -1698,20 +1998,22 @@ class VintageStoryServerManager:
             self.escape_buffer += next_char
 
             # Process based on what we have so far
-            if self.escape_buffer == '\x1b[':
+            if self.escape_buffer == "\x1b[":
                 return self.handle_control_sequence()
-            elif self.escape_buffer == '\x1bO':
+            elif self.escape_buffer == "\x1bO":
                 return self.handle_function_key()
-            elif self.escape_buffer == '\x1bM':
+            elif self.escape_buffer == "\x1bM":
                 self.escape_buffer = ""
                 return True  # Consume and ignore mouse events
-            elif self.escape_buffer.startswith('\x1b[5') or self.escape_buffer.startswith('\x1b[6'):
+            elif self.escape_buffer.startswith(
+                "\x1b[5"
+            ) or self.escape_buffer.startswith("\x1b[6"):
                 # Continue reading for Page Up/Down
                 if select.select([sys.stdin], [], [], self.input_timeout)[0]:
                     final_char = sys.stdin.read(1)
-                    if final_char == '~':
+                    if final_char == "~":
                         self.escape_buffer += final_char
-                        action = self.ESCAPE_SEQUENCES.get(self.escape_buffer, 'ignore')
+                        action = self.ESCAPE_SEQUENCES.get(self.escape_buffer, "ignore")
                         self.execute_action(action)
                         self.escape_buffer = ""
                         return True
@@ -1740,7 +2042,7 @@ class VintageStoryServerManager:
             self.escape_buffer += seq
 
             # Look up action in escape sequence table
-            action = self.ESCAPE_SEQUENCES.get(self.escape_buffer, 'ignore')
+            action = self.ESCAPE_SEQUENCES.get(self.escape_buffer, "ignore")
             self.execute_action(action)
             self.escape_buffer = ""
             return True
@@ -1751,19 +2053,19 @@ class VintageStoryServerManager:
 
     def execute_action(self, action: str):
         """Execute the specified action from escape sequence lookup"""
-        if action == 'scroll_up':
+        if action == "scroll_up":
             self.scroll_log_up()
-        elif action == 'scroll_down':
+        elif action == "scroll_down":
             self.scroll_log_down()
-        elif action == 'page_up':
+        elif action == "page_up":
             self.scroll_log_page_up()
-        elif action == 'page_down':
+        elif action == "page_down":
             self.scroll_log_page_down()
-        elif action == 'home':
+        elif action == "home":
             self.scroll_log_home()
-        elif action == 'end':
+        elif action == "end":
             self.scroll_log_end()
-        elif action == 'ignore':
+        elif action == "ignore":
             # Do nothing - just consume the input
             pass
 
@@ -1779,21 +2081,21 @@ class VintageStoryServerManager:
 
         cmd = self.command_buffer.strip().lower()
 
-        if cmd in ['start', 's']:
+        if cmd in ["start", "s"]:
             if self.start_server():
                 self.update_status()
-                self.add_command_log(self.MESSAGES['server_started'])
+                self.add_command_log(self.MESSAGES["server_started"])
             else:
-                self.add_command_log(self.MESSAGES['server_start_failed'])
+                self.add_command_log(self.MESSAGES["server_start_failed"])
 
-        elif cmd in ['stop', 'st']:
+        elif cmd in ["stop", "st"]:
             if self.stop_server():
                 self.update_status()
-                self.add_command_log(self.MESSAGES['server_stopped'])
+                self.add_command_log(self.MESSAGES["server_stopped"])
             else:
-                self.add_command_log(self.MESSAGES['server_stop_failed'])
+                self.add_command_log(self.MESSAGES["server_stop_failed"])
 
-        elif cmd in ['restart', 'r']:
+        elif cmd in ["restart", "r"]:
             # Non-blocking restart with background wait
             self.add_command_log("Restarting server...")
             # Use thread pool instead of creating new thread
@@ -1801,33 +2103,45 @@ class VintageStoryServerManager:
 
         # Help command removed - help information is always visible on screen
 
-        elif cmd in ['players', 'p']:
+        elif cmd in ["players", "p"]:
             # Trigger immediate player count update before showing results
-            self.add_command_log(self.MESSAGES['updating_players'])
+            self.add_command_log(self.MESSAGES["updating_players"])
             self.start_background_task(self.trigger_player_update)
 
             # Non-blocking: show current players immediately, update will happen in background
             players = self.get_online_players_list()
             if players:
                 player_list = ", ".join(players)
-                self.add_command_log(self.MESSAGES['online_players'].format(player_list))
+                self.add_command_log(
+                    self.MESSAGES["online_players"].format(player_list)
+                )
             else:
-                self.add_command_log(self.MESSAGES['no_players'])
+                self.add_command_log(self.MESSAGES["no_players"])
 
-        elif cmd in ['loginfo', 'li']:
+        elif cmd in ["loginfo", "li"]:
             with self.log_lock:
                 total_lines = len(self.log_lines)
                 visible_lines = self.max_y - 12  # Account for UI elements
-                current_position = total_lines - visible_lines - self.scroll_offset if total_lines > visible_lines else 0
+                current_position = (
+                    total_lines - visible_lines - self.scroll_offset
+                    if total_lines > visible_lines
+                    else 0
+                )
 
                 # Add resource usage information
-                memory_info = f"Memory: {self._memory_usage_mb:.1f}MB" if self._memory_usage_mb > 0 else "Memory: N/A"
+                memory_info = (
+                    f"Memory: {self._memory_usage_mb:.1f}MB"
+                    if self._memory_usage_mb > 0
+                    else "Memory: N/A"
+                )
                 with self._command_lock:
                     command_log_size = len(self.command_log)
 
                 # Calculate scroll position percentage
                 if total_lines > visible_lines:
-                    scroll_percent = int((self.scroll_offset / (total_lines - visible_lines)) * 100)
+                    scroll_percent = int(
+                        (self.scroll_offset / (total_lines - visible_lines)) * 100
+                    )
                     scroll_info = f"Scroll: {scroll_percent}%"
                 else:
                     scroll_info = "Scroll: 100%"
@@ -1835,25 +2149,32 @@ class VintageStoryServerManager:
                 # Add security information
                 security_info = f"Security: {self.failed_commands} failed attempts, {len(self.security_events)} events"
 
-                self.add_command_log(f"Log: {total_lines} lines, showing {current_position + 1}-{min(current_position + visible_lines, total_lines)}, {scroll_info}, {memory_info}, Commands: {command_log_size}, {security_info}")
+                self.add_command_log(
+                    f"Log: {total_lines} lines, showing {current_position + 1}-{min(current_position + visible_lines, total_lines)}, {scroll_info}, {memory_info}, Commands: {command_log_size}, {security_info}"
+                )
 
-        elif cmd in ['quit', 'exit', 'q']:
-            self.add_command_log(self.MESSAGES['quitting'])
+        elif cmd in ["quit", "exit", "q"]:
+            self.add_command_log(self.MESSAGES["quitting"])
             self.running = False
 
-        elif cmd.startswith('/'):
+        elif cmd.startswith("/"):
             server_cmd = cmd[1:]
             # Additional validation for server commands
             if len(server_cmd) > 1000:
-                self.log_security_event("COMMAND_TOO_LONG", f"Server command too long: {len(server_cmd)} chars")
-                self.add_command_log("Server command too long - maximum 1000 characters")
+                self.log_security_event(
+                    "COMMAND_TOO_LONG",
+                    f"Server command too long: {len(server_cmd)} chars",
+                )
+                self.add_command_log(
+                    "Server command too long - maximum 1000 characters"
+                )
             elif self.send_command(server_cmd):
-                self.add_command_log(self.MESSAGES['command_sent'].format(server_cmd))
+                self.add_command_log(self.MESSAGES["command_sent"].format(server_cmd))
             else:
-                self.add_command_log(self.MESSAGES['command_failed'])
+                self.add_command_log(self.MESSAGES["command_failed"])
         else:
             # Unknown command
-            self.add_command_log(self.MESSAGES['unknown_command'].format(cmd))
+            self.add_command_log(self.MESSAGES["unknown_command"].format(cmd))
 
     def cleanup(self):
         """Enhanced cleanup on exit with proper resource management"""
@@ -1874,7 +2195,7 @@ class VintageStoryServerManager:
         self.cleanup_screen_sessions()
 
         # Final cleanup
-        self.add_command_log(self.MESSAGES['cleanup_completed'])
+        self.add_command_log(self.MESSAGES["cleanup_completed"])
         # Don't stop the server - let it keep running in background
 
     def cleanup_screen_sessions(self):
@@ -1882,12 +2203,16 @@ class VintageStoryServerManager:
         try:
             # Check if our screen session is still running
             result = subprocess.run(
-                ['screen', '-list', self.screen_name],
-                capture_output=True, text=True, timeout=2.0
+                ["screen", "-list", self.screen_name],
+                capture_output=True,
+                text=True,
+                timeout=2.0,
             )
 
             if result.returncode == 0 and self.screen_name in result.stdout:
-                self.add_command_log(f"Screen session '{self.screen_name}' is still running (intentional)")
+                self.add_command_log(
+                    f"Screen session '{self.screen_name}' is still running (intentional)"
+                )
             else:
                 self.add_command_log("No active screen sessions found")
 
@@ -1899,10 +2224,10 @@ class VintageStoryServerManager:
     def signal_handler(self, signum, frame):
         """Handle termination signals"""
         signal_name = {
-            signal.SIGINT: 'SIGINT',
-            signal.SIGTERM: 'SIGTERM',
-            signal.SIGHUP: 'SIGHUP'
-        }.get(signum, f'Signal {signum}')
+            signal.SIGINT: "SIGINT",
+            signal.SIGTERM: "SIGTERM",
+            signal.SIGHUP: "SIGHUP",
+        }.get(signum, f"Signal {signum}")
 
         self.add_command_log(f"Received {signal_name} - initiating graceful shutdown")
         self.running = False
@@ -1917,7 +2242,9 @@ class VintageStoryServerManager:
         # Kill any remaining background tasks
         for thread in self._background_tasks:
             if thread.is_alive():
-                self.add_command_log(f"Force terminating background task: {thread.name}")
+                self.add_command_log(
+                    f"Force terminating background task: {thread.name}"
+                )
 
         # Clear background tasks list
         self._background_tasks.clear()
@@ -1927,9 +2254,9 @@ class VintageStoryServerManager:
     def run(self):
         """Main application loop"""
         # Enhanced signal handling for graceful shutdown
-        signal.signal(signal.SIGINT, self.signal_handler)   # Ctrl+C
+        signal.signal(signal.SIGINT, self.signal_handler)  # Ctrl+C
         signal.signal(signal.SIGTERM, self.signal_handler)  # Termination request
-        signal.signal(signal.SIGHUP, self.signal_handler)   # Hangup (SSH disconnect)
+        signal.signal(signal.SIGHUP, self.signal_handler)  # Hangup (SSH disconnect)
 
         # Ignore SIGPIPE to prevent crashes on broken pipes
         signal.signal(signal.SIGPIPE, signal.SIG_IGN)
@@ -2003,13 +2330,19 @@ class VintageStoryServerManager:
                     # Ensure at least one complete draw on startup
                     if self._needs_redraw:
                         self._needs_redraw = False
-                except (OSError, IOError) as e:
+                except (OSError, IOError):
                     # Terminal I/O error in UI drawing
-                    sys.stdout.write(TerminalControl.move_cursor(1, 1) + "VintageStory Server Manager - Terminal I/O Error")
+                    sys.stdout.write(
+                        TerminalControl.move_cursor(1, 1)
+                        + "VintageStory Server Manager - Terminal I/O Error"
+                    )
                     self._needs_redraw = False
-                except Exception as e:
+                except Exception:
                     # Unexpected error in UI drawing
-                    sys.stdout.write(TerminalControl.move_cursor(1, 1) + "VintageStory Server Manager - Error in UI drawing")
+                    sys.stdout.write(
+                        TerminalControl.move_cursor(1, 1)
+                        + "VintageStory Server Manager - Error in UI drawing"
+                    )
                     self._needs_redraw = False
 
                 sys.stdout.flush()
@@ -2024,12 +2357,14 @@ class VintageStoryServerManager:
         except (OSError, IOError) as e:
             print(f"Terminal I/O Error: {e}")
             import traceback
+
             traceback.print_exc()
             # Use emergency shutdown for critical errors
             self.emergency_shutdown()
         except Exception as e:
             print(f"Unexpected Error: {e}")
             import traceback
+
             traceback.print_exc()
             # Use emergency shutdown for critical errors
             self.emergency_shutdown()
@@ -2047,7 +2382,10 @@ class VintageStoryServerManager:
             except (OSError, IOError) as restore_error:
                 print(f"Terminal restore I/O error: {restore_error}", file=sys.stderr)
             except Exception as restore_error:
-                print(f"Terminal restore unexpected error: {restore_error}", file=sys.stderr)
+                print(
+                    f"Terminal restore unexpected error: {restore_error}",
+                    file=sys.stderr,
+                )
 
     def invalidate_caches(self):
         """Invalidate all caches to force fresh data"""
@@ -2060,18 +2398,26 @@ class VintageStoryServerManager:
     def force_redraw(self):
         """Force a complete redraw of the UI"""
         self._needs_redraw = True
-        self._dirty_regions = {'header', 'borders', 'log', 'players', 'feedback', 'help', 'input'}
+        self._dirty_regions = {
+            "header",
+            "borders",
+            "log",
+            "players",
+            "feedback",
+            "help",
+            "input",
+        }
         # Clear cached drawing flags
-        if hasattr(self, '_header_drawn'):
-            delattr(self, '_header_drawn')
-        if hasattr(self, '_borders_drawn'):
-            delattr(self, '_borders_drawn')
-        if hasattr(self, '_help_drawn'):
-            delattr(self, '_help_drawn')
-        if hasattr(self, '_last_log_hash'):
-            delattr(self, '_last_log_hash')
-        if hasattr(self, '_last_feedback_hash'):
-            delattr(self, '_last_feedback_hash')
+        if hasattr(self, "_header_drawn"):
+            delattr(self, "_header_drawn")
+        if hasattr(self, "_borders_drawn"):
+            delattr(self, "_borders_drawn")
+        if hasattr(self, "_help_drawn"):
+            delattr(self, "_help_drawn")
+        if hasattr(self, "_last_log_hash"):
+            delattr(self, "_last_log_hash")
+        if hasattr(self, "_last_feedback_hash"):
+            delattr(self, "_last_feedback_hash")
 
     def mark_dirty(self, region: str):
         """Mark a UI region as needing redraw"""
@@ -2096,7 +2442,9 @@ class VintageStoryServerManager:
             return None
 
         # Create and start the thread
-        thread = threading.Thread(target=task_func, args=args, kwargs=kwargs, daemon=True)
+        thread = threading.Thread(
+            target=task_func, args=args, kwargs=kwargs, daemon=True
+        )
         thread.start()
         self._background_tasks.append(thread)
         return thread
@@ -2106,7 +2454,9 @@ class VintageStoryServerManager:
         if not self._background_tasks:
             return
 
-        self.add_command_log(f"Waiting for {len(self._background_tasks)} background tasks...")
+        self.add_command_log(
+            f"Waiting for {len(self._background_tasks)} background tasks..."
+        )
 
         start_time = time.time()
         for thread in self._background_tasks:
@@ -2120,7 +2470,9 @@ class VintageStoryServerManager:
         # Clean up any remaining tasks
         self._background_tasks = [t for t in self._background_tasks if not t.is_alive()]
         if self._background_tasks:
-            self.add_command_log(f"Warning: {len(self._background_tasks)} background tasks did not complete")
+            self.add_command_log(
+                f"Warning: {len(self._background_tasks)} background tasks did not complete"
+            )
         else:
             self.add_command_log("All background tasks completed successfully")
 
@@ -2151,7 +2503,7 @@ class VintageStoryServerManager:
         paths_to_check = [
             (self.vs_path, "Server directory"),
             (self.data_path, "Data directory"),
-            (os.path.join(self.vs_path, self.service), "Service file")
+            (os.path.join(self.vs_path, self.service), "Service file"),
         ]
 
         for path, description in paths_to_check:
@@ -2179,20 +2531,24 @@ class VintageStoryServerManager:
 
         # Check for rate limiting
         if self.failed_commands > 10:
-            self.log_security_event("RATE_LIMIT", f"Too many failed commands: {self.failed_commands}")
+            self.log_security_event(
+                "RATE_LIMIT", f"Too many failed commands: {self.failed_commands}"
+            )
             return ""
 
         # Check for dangerous patterns
         command_lower = command.lower()
         for pattern in self.DANGEROUS_PATTERNS:
             if re.search(pattern, command_lower):
-                self.log_security_event("DANGEROUS_PATTERN", f"Blocked dangerous pattern: {pattern}")
+                self.log_security_event(
+                    "DANGEROUS_PATTERN", f"Blocked dangerous pattern: {pattern}"
+                )
                 return ""
 
         # Remove any dangerous characters
-        dangerous_chars = ['`', '$', '&', '|', ';', '<', '>', '(', ')', '{', '}']
+        dangerous_chars = ["`", "$", "&", "|", ";", "<", ">", "(", ")", "{", "}"]
         for char in dangerous_chars:
-            command = command.replace(char, '')
+            command = command.replace(char, "")
 
         # Limit command length
         if len(command) > 1000:
@@ -2207,7 +2563,10 @@ class VintageStoryServerManager:
         # Reset failed commands counter every 5 minutes
         if current_time - self.last_security_check > 300:  # 5 minutes
             if self.failed_commands > 0:
-                self.log_security_event("SECURITY_RESET", f"Reset failed commands counter: {self.failed_commands}")
+                self.log_security_event(
+                    "SECURITY_RESET",
+                    f"Reset failed commands counter: {self.failed_commands}",
+                )
             self.failed_commands = 0
             self.last_security_check = current_time
 
@@ -2217,14 +2576,12 @@ class VintageStoryServerManager:
         security_msg = f"[SECURITY] {event_type}: {details}"
 
         # Track security events
-        self.security_events.append({
-            'timestamp': timestamp,
-            'type': event_type,
-            'details': details
-        })
+        self.security_events.append(
+            {"timestamp": timestamp, "type": event_type, "details": details}
+        )
 
         # Increment failed commands counter for certain events
-        if event_type in ['INVALID_COMMAND', 'COMMAND_TOO_LONG']:
+        if event_type in ["INVALID_COMMAND", "COMMAND_TOO_LONG"]:
             self.failed_commands += 1
 
         self.add_command_log(security_msg)
@@ -2233,21 +2590,31 @@ class VintageStoryServerManager:
     def validate_configuration(self):
         """Validate configuration constants"""
         # Check required configuration keys
-        required_config_keys = ['username', 'vs_path', 'data_path', 'screen_name', 'service']
+        required_config_keys = [
+            "username",
+            "vs_path",
+            "data_path",
+            "screen_name",
+            "service",
+        ]
         for key in required_config_keys:
             if key not in self.CONFIG:
                 self.log_error(f"Missing required configuration key: {key}")
                 return False
 
         # Check required performance keys
-        required_perf_keys = ['target_fps', 'process_cache_interval', 'log_buffer_max_size']
+        required_perf_keys = [
+            "target_fps",
+            "process_cache_interval",
+            "log_buffer_max_size",
+        ]
         for key in required_perf_keys:
             if key not in self.PERFORMANCE:
                 self.log_error(f"Missing required performance key: {key}")
                 return False
 
         # Check required message keys
-        required_msg_keys = ['server_started', 'server_start_failed', 'quitting']
+        required_msg_keys = ["server_started", "server_start_failed", "quitting"]
         for key in required_msg_keys:
             if key not in self.MESSAGES:
                 self.log_error(f"Missing required message key: {key}")
@@ -2266,21 +2633,26 @@ class VintageStoryServerManager:
 
         # Force garbage collection
         import gc
+
         gc.collect()
 
-                # Trim log lines if they exceed reasonable limits
+        # Trim log lines if they exceed reasonable limits
         with self.log_lock:
-            if len(self.log_lines) > self.PERFORMANCE['log_buffer_max_size'] * 0.8:  # Keep under 80% of max
+            if (
+                len(self.log_lines) > self.PERFORMANCE["log_buffer_max_size"] * 0.8
+            ):  # Keep under 80% of max
                 # Remove oldest lines, keeping recent ones
-                target_size = int(self.PERFORMANCE['log_buffer_max_size'] * 0.8)
+                target_size = int(self.PERFORMANCE["log_buffer_max_size"] * 0.8)
                 excess = len(self.log_lines) - target_size
                 for _ in range(excess):
                     self.log_lines.popleft()
 
         # Clear old command log entries if too many
         with self._command_lock:
-            if len(self.command_log) > self.PERFORMANCE['command_log_max_size'] * 0.8:  # Keep under 80% of max
-                target_size = int(self.PERFORMANCE['command_log_max_size'] * 0.8)
+            if (
+                len(self.command_log) > self.PERFORMANCE["command_log_max_size"] * 0.8
+            ):  # Keep under 80% of max
+                target_size = int(self.PERFORMANCE["command_log_max_size"] * 0.8)
                 excess = len(self.command_log) - target_size
                 for _ in range(excess):
                     self.command_log.popleft()
@@ -2290,8 +2662,8 @@ class VintageStoryServerManager:
             self.escape_buffer = ""
 
         # Reset any stuck flags
-        if hasattr(self, '_terminal_resized'):
-            delattr(self, '_terminal_resized')
+        if hasattr(self, "_terminal_resized"):
+            delattr(self, "_terminal_resized")
 
     def check_resources(self):
         """Monitor resource usage and log warnings if needed"""
@@ -2305,13 +2677,16 @@ class VintageStoryServerManager:
         # Check memory usage
         try:
             import psutil
+
             process = psutil.Process()
             memory_info = process.memory_info()
             self._memory_usage_mb = memory_info.rss / 1024 / 1024  # Convert to MB
 
             # Log warning if memory usage is high
-            if self._memory_usage_mb > self.PERFORMANCE['memory_warning_threshold']:
-                self.add_command_log(self.MESSAGES['high_memory_usage'].format(self._memory_usage_mb))
+            if self._memory_usage_mb > self.PERFORMANCE["memory_warning_threshold"]:
+                self.add_command_log(
+                    self.MESSAGES["high_memory_usage"].format(self._memory_usage_mb)
+                )
         except ImportError:
             # psutil not available, skip memory monitoring
             pass
@@ -2324,13 +2699,20 @@ class VintageStoryServerManager:
             self._log_lines_count = len(self.log_lines)
 
         # Log warning if log buffer is getting large
-        if self._log_lines_count > self.PERFORMANCE['log_buffer_warning_threshold']:
-            self.add_command_log(self.MESSAGES['large_log_buffer'].format(self._log_lines_count))
+        if self._log_lines_count > self.PERFORMANCE["log_buffer_warning_threshold"]:
+            self.add_command_log(
+                self.MESSAGES["large_log_buffer"].format(self._log_lines_count)
+            )
 
         # Check command log size
         with self._command_lock:
-            if len(self.command_log) > self.PERFORMANCE['command_log_warning_threshold']:
-                self.add_command_log(self.MESSAGES['large_command_log'].format(len(self.command_log)))
+            if (
+                len(self.command_log)
+                > self.PERFORMANCE["command_log_warning_threshold"]
+            ):
+                self.add_command_log(
+                    self.MESSAGES["large_command_log"].format(len(self.command_log))
+                )
 
     def strip_timestamp(self, line: str) -> str:
         """Strip timestamp prefix from log lines"""
@@ -2338,17 +2720,18 @@ class VintageStoryServerManager:
 
         # Match common timestamp patterns
         timestamp_patterns = [
-            r'^\d{1,2}\.\d{1,2}\.\d{4}\s+\d{1,2}:\d{2}:\d{2}\s+',  # 1.8.2025 20:22:44
-            r'^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\s+',          # 2025-01-08 20:22:44
-            r'^\d{2}/\d{2}/\d{4}\s+\d{2}:\d{2}:\d{2}\s+',          # 01/08/2025 20:22:44
+            r"^\d{1,2}\.\d{1,2}\.\d{4}\s+\d{1,2}:\d{2}:\d{2}\s+",  # 1.8.2025 20:22:44
+            r"^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\s+",  # 2025-01-08 20:22:44
+            r"^\d{2}/\d{2}/\d{4}\s+\d{2}:\d{2}:\d{2}\s+",  # 01/08/2025 20:22:44
         ]
 
         for pattern in timestamp_patterns:
             if re.match(pattern, line):
                 # Remove the timestamp and return the rest
-                return re.sub(pattern, '', line)
+                return re.sub(pattern, "", line)
 
         return line
+
 
 def main():
     """Main entry point"""
@@ -2357,6 +2740,7 @@ def main():
 
     manager = VintageStoryServerManager()
     manager.run()
+
 
 if __name__ == "__main__":
     main()
