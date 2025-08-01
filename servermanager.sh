@@ -1,43 +1,4 @@
 #!/usr/bin/env python3
-"""
-VintageStory Server Manager
-A real-time terminal interface for managing VintageStory game servers.
-Inspired by btop with native terminal control codes.
-
-DEPENDENCIES:
-============
-System Commands (required):
-- pgrep (procps package)
-- screen (screen package)
-- dotnet (.NET Runtime)
-- bash (bash package)
-- ps (procps package)
-
-Python Modules (built-in, should be available):
-- os, sys, time, signal, subprocess, threading
-- json, select, termios, tty, fcntl, struct
-- pathlib, typing, collections, re
-
-Installation Commands:
-=====================
-Ubuntu/Debian:
-  sudo apt update
-  sudo apt install procps screen bash python3
-
-CentOS/RHEL/Fedora:
-  sudo yum install procps screen bash python3
-  # or for newer versions:
-  sudo dnf install procps screen bash python3
-
-.NET Runtime:
-  https://dotnet.microsoft.com/en-us/download
-
-Terminal Requirements:
-====================
-- Terminal with ANSI color support (xterm-256color recommended)
-- Minimum terminal size: 80x24 characters
-"""
-
 import os
 import sys
 import time
@@ -418,7 +379,21 @@ class VintageStoryServerManager:
     def update_status(self):
         """Update server status"""
         process_info = self.get_process_info()
+        old_status = self.status
         self.status = "ON" if process_info['is_running'] else "OFF"
+
+        # If server just started (status changed from OFF to ON), trigger immediate player update
+        if old_status == "OFF" and self.status == "ON":
+            # Trigger immediate player count update
+            threading.Thread(target=self.trigger_player_update, daemon=True).start()
+
+    def trigger_player_update(self):
+        """Trigger an immediate player count update"""
+        if self.get_process_info()['is_running']:
+            if self.send_command("list clients"):
+                time.sleep(2)
+                self.parse_list_clients_output()
+                self.add_command_log(f"Manual player count update: {len(self.connected_players)} players")
 
     def get_pid(self) -> Optional[int]:
         """Get cached PID, updating only when needed"""
@@ -687,13 +662,18 @@ class VintageStoryServerManager:
                         self.parse_list_clients_output()
                         # Debug: Log the update (commented out to prevent spam)
                         # self.add_command_log(f"Player count updated: {len(self.connected_players)} players")
+                else:
+                    # Server not running, clear player list
+                    self.connected_players.clear()
+                    self.player_count = 0
 
                 # Sleep for the update interval
                 time.sleep(self.player_update_interval)
 
             except Exception as e:
-                # Sleep on error and continue
-                time.sleep(self.player_update_interval)
+                # Log error and continue with shorter sleep
+                print(f"Player update error: {e}", file=sys.stderr)
+                time.sleep(10)  # Shorter sleep on error
 
     def start_player_update_thread(self):
         """Start the background player update thread"""
@@ -705,18 +685,11 @@ class VintageStoryServerManager:
 
     def initial_player_check(self):
         """Initial player count check when script starts"""
-        # Wait a bit for the server to be ready (reduced from 5 to 2 seconds)
-        time.sleep(2)
-
-        # Check if server is running and do initial player count
+        # Check if server is running and do initial player count immediately
         if self.get_process_info()['is_running']:
             self.add_command_log("Performing initial player count check...")
-            if self.send_command("list clients"):
-                time.sleep(2)  # Reduced from 3 to 2 seconds for responsiveness
-                self.parse_list_clients_output()
-                self.add_command_log(f"Initial player count: {len(self.connected_players)} players")
-            else:
-                self.add_command_log("Failed to get initial player count")
+            # Use the same trigger method for consistency
+            self.trigger_player_update()
         else:
             self.add_command_log("Server not running - no initial player check needed")
 
@@ -731,9 +704,9 @@ class VintageStoryServerManager:
         try:
             if os.path.exists(self.log_file):
                 with open(self.log_file, 'r', encoding='utf-8', errors='ignore') as f:
-                    # Read the last 50 lines to find recent /list clients output
+                    # Read the last 100 lines to find recent /list clients output (increased from 50)
                     lines = f.readlines()
-                    recent_lines = lines[-50:] if len(lines) > 50 else lines
+                    recent_lines = lines[-100:] if len(lines) > 100 else lines
 
                     # Clear current players
                     self.connected_players.clear()
@@ -760,8 +733,8 @@ class VintageStoryServerManager:
                     self.player_count = len(self.connected_players)
 
         except Exception as e:
-            # Silently handle errors
-            pass
+            # Log error for debugging
+            print(f"Parse list clients error: {e}", file=sys.stderr)
 
     def get_online_players_list(self) -> List[str]:
         """Get list of currently online players"""
@@ -1449,6 +1422,13 @@ class VintageStoryServerManager:
             pass
 
         elif cmd in ['players', 'p']:
+            # Trigger immediate player count update before showing results
+            self.add_command_log("Updating player count...")
+            threading.Thread(target=self.trigger_player_update, daemon=True).start()
+
+            # Wait a moment for the update to complete
+            time.sleep(3)
+
             players = self.get_online_players_list()
             if players:
                 player_list = ", ".join(players)
