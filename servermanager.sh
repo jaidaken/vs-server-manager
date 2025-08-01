@@ -437,6 +437,10 @@ class VintageStoryServerManager:
             # Mark PID for update after 2 seconds (manual start)
             self.pid_update_needed = True
             self._pid_delay_needed = True
+
+            # Force log refresh after server start to catch initial lines
+            threading.Thread(target=self.force_log_refresh, daemon=True).start()
+
             # Non-blocking: return immediately, status will be updated in main loop
             return True
         except subprocess.CalledProcessError:
@@ -473,13 +477,29 @@ class VintageStoryServerManager:
         timestamp = time.strftime("%H:%M:%S")
         self.command_log.append(f"[{timestamp}] {message}")
 
+    def force_log_refresh(self):
+        """Force a complete log refresh to catch any missed lines"""
+        time.sleep(1)  # Wait a moment for server to start writing logs
+        try:
+            if os.path.exists(self.log_file):
+                with open(self.log_file, 'r', encoding='utf-8', errors='ignore') as f:
+                    content = f.read()
+                    if content:
+                        lines = content.splitlines()
+                        with self.log_lock:
+                            self.log_lines.clear()
+                            self.log_lines.extend(lines)
+                        self.last_log_size = os.path.getsize(self.log_file)
+        except Exception as e:
+            print(f"Force log refresh error: {e}", file=sys.stderr)
+
     def restart_sequence(self):
         """Background thread for restart sequence"""
         # Send stop command
         self.stop_server()
 
         # Wait 10 seconds for server to stop
-        time.sleep(10)
+        time.sleep(20)
 
         # Start new server
         if self.start_server():
@@ -515,47 +535,65 @@ class VintageStoryServerManager:
             try:
                 if os.path.exists(self.log_file):
                     current_size = os.path.getsize(self.log_file)
-                    # Debug: Log file size tracking (commented out to prevent drawing interference)
-                    # print(f"Log file size: {current_size}, last size: {self.last_log_size}", file=sys.stderr)
 
                     if current_size > self.last_log_size:
-                        with open(self.log_file, 'r', encoding='utf-8', errors='ignore') as f:
-                            f.seek(self.last_log_size)
-                            new_content = f.read()
-                            self.last_log_size = current_size
+                        # Use a more robust file reading approach
+                        try:
+                            with open(self.log_file, 'r', encoding='utf-8', errors='ignore') as f:
+                                f.seek(self.last_log_size)
+                                new_content = f.read()
 
-                            if new_content:
-                                new_lines = new_content.splitlines()
-                                with self.log_lock:
-                                    self.log_lines.extend(new_lines)
-                                    # Debug: New log lines tracking (commented out to prevent drawing interference)
-                                    # print(f"Added {len(new_lines)} new log lines", file=sys.stderr)
+                                if new_content:
+                                    new_lines = new_content.splitlines()
+                                    with self.log_lock:
+                                        self.log_lines.extend(new_lines)
+                                        # Debug: New log lines tracking (commented out to prevent drawing interference)
+                                        # print(f"Added {len(new_lines)} new log lines", file=sys.stderr)
 
-                                # Parse new lines for player events
-                                # self.parse_new_log_lines_for_players(new_lines) # Disabled - using timer-based updates
+                                    # Parse new lines for player events
+                                    # self.parse_new_log_lines_for_players(new_lines) # Disabled - using timer-based updates
+
+                                # Update size after successful read
+                                self.last_log_size = current_size
+
+                        except (IOError, OSError) as e:
+                            # If file read fails, try to recover by reading from beginning
+                            try:
+                                with open(self.log_file, 'r', encoding='utf-8', errors='ignore') as f:
+                                    new_content = f.read()
+                                    if new_content:
+                                        new_lines = new_content.splitlines()
+                                        with self.log_lock:
+                                            self.log_lines.clear()
+                                            self.log_lines.extend(new_lines)
+                                        self.last_log_size = current_size
+                            except:
+                                pass
 
                     elif current_size < self.last_log_size:
-                        self.last_log_size = 0
-                        with open(self.log_file, 'r', encoding='utf-8', errors='ignore') as f:
-                            new_content = f.read()
-                            self.last_log_size = current_size
+                        # Log file was truncated or rotated
+                        try:
+                            with open(self.log_file, 'r', encoding='utf-8', errors='ignore') as f:
+                                new_content = f.read()
+                                if new_content:
+                                    new_lines = new_content.splitlines()
+                                    with self.log_lock:
+                                        self.log_lines.clear()
+                                        self.log_lines.extend(new_lines)
+                                    self.last_log_size = current_size
+                        except:
+                            pass
 
-                            if new_content:
-                                new_lines = new_content.splitlines()
-                                with self.log_lock:
-                                    self.log_lines.clear()
-                                    self.log_lines.extend(new_lines)
-
-                # Minimal sleep for responsiveness
-                time.sleep(0.01)  # 10ms for instant updates
+                # Shorter sleep for more responsive updates
+                time.sleep(0.005)  # 5ms for faster updates
 
             except (IOError, OSError) as e:
-                # Minimal sleep on error
-                time.sleep(0.01)
+                # Shorter sleep on error
+                time.sleep(0.005)
                 pass
             except Exception as e:
-                # Minimal sleep on exception
-                time.sleep(0.01)
+                # Shorter sleep on exception
+                time.sleep(0.005)
                 pass
 
     def start_log_monitor(self):
@@ -908,6 +946,13 @@ class VintageStoryServerManager:
                 start_idx = max(0, total_lines - log_height - self.scroll_offset)
                 end_idx = start_idx + log_height
                 display_lines = all_lines[start_idx:end_idx]
+
+                # If we're at the end (scroll_offset = 0), ensure we show the most recent lines
+                if self.scroll_offset == 0 and len(display_lines) < log_height:
+                    # Adjust to show the most recent lines
+                    start_idx = max(0, total_lines - log_height)
+                    end_idx = total_lines
+                    display_lines = all_lines[start_idx:end_idx]
 
         # Check if we need to update (only if lines have changed)
         current_lines_hash = hash(tuple(display_lines))
@@ -1409,9 +1454,8 @@ class VintageStoryServerManager:
 
         elif cmd in ['restart', 'r']:
             # Non-blocking restart with background wait
-            self.stop_server()
             self.add_command_log("Restarting server...")
-            # Start background thread to wait for stop then start
+            # Start background thread to handle stop then start
             threading.Thread(target=self.restart_sequence, daemon=True).start()
 
 
@@ -1503,8 +1547,8 @@ class VintageStoryServerManager:
                 if not self.handle_input():
                     break
 
-                # Minimal sleep for responsiveness
-                time.sleep(0.0001)  # 0.1ms for maximum responsiveness
+                # Shorter sleep for more responsive log updates
+                time.sleep(0.001)  # 1ms for better responsiveness
 
         except Exception as e:
             print(f"Error: {e}")
